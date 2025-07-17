@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>OpenClass API 테스트 브라우저</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Pretendard', Arial, sans-serif; background: #f8fafc; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    button { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 10px 20px; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; }
+    button:hover { background: #1d4ed8; }
+    pre { background: #f1f5f9; padding: 16px; border-radius: 8px; font-size: 0.95rem; overflow-x: auto; }
+    .url { color: #2563eb; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>OpenClass API 테스트 브라우저</h1>
+    <div>
+      <span class="url">GET /api/classrooms</span>
+      <button onclick="fetchClassrooms()">강의실 목록 불러오기</button>
+    </div>
+    <pre id="result">결과가 여기에 표시됩니다.</pre>
+  </div>
+  <script>
+    async function fetchClassrooms() {
+      const resultEl = document.getElementById('result');
+      resultEl.textContent = '불러오는 중...';
+      try {
+        const res = await fetch('/api/classrooms');
+        const data = await res.json();
+        resultEl.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        resultEl.textContent = '에러: ' + e;
+      }
+    }
+  </script>
+</body>
+</html> 

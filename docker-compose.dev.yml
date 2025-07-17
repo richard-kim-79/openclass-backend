@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # OpenClass 개발 서버
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Node.js 디버거
+    environment:
+      - NODE_ENV=development
+      - DB_TYPE=sqlite
+      - DB_PATH=/app/data/openclass.db
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    depends_on: []
+    command: npm run dev:server
+    restart: unless-stopped
+    networks:
+      - openclass-dev-network
+
+  # SQLite 데이터베이스 (개발용)
+  # SQLite는 파일 기반이므로 별도 컨테이너 불필요
+  # 데이터는 ./data 디렉토리에 저장됨
+
+volumes:
+  # SQLite 데이터는 호스트의 ./data 디렉토리에 저장
+
+networks:
+  openclass-dev-network:
+    driver: bridge 

@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClass - 모두의 강의실</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .tag-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: #f8f9ff;
+            border: 2px solid #e0e7ff;
+            border-radius: 20px;
+            padding: 10px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tag:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tag.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .classroom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .classroom-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e0e7ff 100%);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .classroom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .classroom-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .classroom-teacher {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .classroom-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .classroom-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .classroom-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .classroom-tag {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e7ff;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e7ff;
+            border-radius: 25px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .onboarding {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .onboarding h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .step {
+            margin-bottom: 40px;
+        }
+
+        .step h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .classroom-detail {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .thread {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .thread-author {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .thread-content {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .thread-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="logo">OpenClass</div>
+            <div class="tagline">모두의 강의실 - 누구나 선생님, 누구나 학생</div>
+            <div class="user-actions">
+                <div id="guestActions">
+                    <button class="btn btn-primary" onclick="showLoginModal()">로그인</button>
+                    <button class="btn btn-secondary" onclick="showOnboarding()">관심사 설정</button>
+                </div>
+                <div id="userActions" class="hidden">
+                    <button class="btn btn-primary" onclick="showCreateModal()">강의실 개설</button>
+                    <button class="btn btn-secondary" onclick="showOnboarding()">관심사 설정</button>
+                    <button class="btn btn-secondary" onclick="showApiKeyModal()">API 키</button>
+                    <button class="btn btn-secondary" onclick="logout()">로그아웃</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div id="mainContent">
+            <!-- 검색 -->
+            <div class="section">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" class="search-bar" placeholder="관심있는 주제를 검색해보세요..." onkeyup="searchClassrooms(this.value)" style="flex: 1;">
+                    <button class="btn btn-secondary" onclick="showAdvancedSearch()">고급 검색</button>
+                </div>
+                <div id="searchResults" class="hidden">
+                    <h3>🔍 검색 결과</h3>
+                    <div id="searchResultsContent"></div>
+                </div>
+            </div>
+
+            <!-- 추천 강의실 -->
+            <div class="section">
+                <h2>📚 추천 강의실</h2>
+                <div class="classroom-grid" id="classroomGrid">
+                    <!-- 강의실 카드들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 온보딩 화면 -->
+        <div id="onboardingScreen" class="section hidden">
+            <div class="onboarding">
+                <div id="onboardingStep1">
+                    <h2>🎯 OpenClass에 오신 것을 환영합니다!</h2>
+                    <p style="color: #666; margin-bottom: 30px;">나만의 강의실을 만들고, 다른 사람들과 지식을 나누어보세요.</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="text-align: center; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                            <div style="font-size: 40px; margin-bottom: 10px;">🎓</div>
+                            <h3>강의실 개설</h3>
+                            <p>누구나 쉽게 강의실을 만들 수 있어요</p>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                            <div style="font-size: 40px; margin-bottom: 10px;">💬</div>
+                            <h3>실시간 소통</h3>
+                            <p>스레드로 자유롭게 대화해보세요</p>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                            <div style="font-size: 40px; margin-bottom: 10px;">📚</div>
+                            <h3>자료 공유</h3>
+                            <p>파일과 영상으로 풍부한 학습</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="nextOnboardingStep()">시작하기</button>
+                </div>
+                
+                <div id="onboardingStep2" class="hidden">
+                    <h2>🎯 관심사를 선택해주세요</h2>
+                    
+                    <div class="step">
+                        <h3>배우고 싶은 분야</h3>
+                        <div class="tag-grid" id="interestTags">
+                            <!-- 관심사 태그들 -->
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>가르칠 수 있는 분야</h3>
+                        <div class="tag-grid" id="teachTags">
+                            <!-- 가르칠 수 있는 분야 태그들 -->
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-secondary" onclick="prevOnboardingStep()">이전</button>
+                        <button class="btn btn-primary" onclick="completeOnboarding()">완료</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 강의실 상세 화면 -->
+        <div id="classroomDetail" class="hidden">
+            <div class="classroom-detail">
+                <button class="btn btn-secondary" onclick="showMainContent()" style="margin-bottom: 20px;">← 돌아가기</button>
+                <div id="classroomDetailContent">
+                    <!-- 강의실 상세 내용 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 로그인 모달 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>🔐 로그인</h2>
+            <div class="social-login">
+                <button class="btn btn-primary" onclick="socialLogin('google')" style="width: 100%; margin-bottom: 10px;">
+                    <span style="margin-right: 10px;">🔍</span>Google로 로그인
+                </button>
+                <button class="btn btn-secondary" onclick="socialLogin('naver')" style="width: 100%;">
+                    <span style="margin-right: 10px;">🟢</span>Naver로 로그인
+                </button>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #666;">
+                로그인하지 않아도 강의실을 둘러볼 수 있습니다!
+            </div>
+        </div>
+    </div>
+
+    <!-- API 키 모달 -->
+    <div id="apiKeyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>🔑 API 키 관리</h2>
+            <div class="form-group">
+                <label>현재 API 키</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="apiKeyDisplay" readonly style="flex: 1;">
+                    <button class="btn btn-secondary" onclick="copyApiKey()">복사</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>새 API 키 생성</label>
+                <button class="btn btn-primary" onclick="generateApiKey()">새 키 생성</button>
+            </div>
+            <div style="background: #f8f9ff; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <h4>API 사용법</h4>
+                <p>강의실 데이터 검색: <code>GET /api/classrooms?q=검색어</code></p>
+                <p>스레드 검색: <code>GET /api/threads?q=검색어</code></p>
+                <p>자료 검색: <code>GET /api/materials?q=검색어</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 자료 추가 모달 -->
+    <div id="materialModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>📚 자료 추가</h2>
+            <div class="form-group">
+                <label>자료 제목</label>
+                <input type="text" id="materialTitle" placeholder="자료 제목을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>자료 설명</label>
+                <textarea id="materialDescription" placeholder="자료에 대한 설명을 입력하세요"></textarea>
+            </div>
+            <div class="form-group">
+                <label>자료 유형</label>
+                <select id="materialType" onchange="toggleMaterialInput()">
+                    <option value="file">파일 업로드</option>
+                    <option value="youtube">유튜브 링크</option>
+                    <option value="link">외부 링크</option>
+                </select>
+            </div>
+            <div class="form-group" id="fileUploadGroup">
+                <label>파일 선택</label>
+                <input type="file" id="materialFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.png,.gif">
+            </div>
+            <div class="form-group hidden" id="linkInputGroup">
+                <label>링크 URL</label>
+                <input type="url" id="materialUrl" placeholder="https://...">
+            </div>
+            <button class="btn btn-primary" onclick="addMaterial()">자료 추가</button>
+        </div>
+    </div>
+
+    <!-- 강의실 생성 모달 -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>🎓 새 강의실 개설</h2>
+            <div class="form-group">
+                <label>강의실 이름</label>
+                <input type="text" id="classroomName" placeholder="예: 기초 영어회화">
+            </div>
+            <div class="form-group">
+                <label>강의실 설명</label>
+                <textarea id="classroomDescription" placeholder="어떤 내용을 나누실 건가요?"></textarea>
+            </div>
+            <div class="form-group">
+                <label>태그 선택</label>
+                <div class="tag-grid" id="modalTags">
+                    <!-- 태그들 -->
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="createClassroom()">강의실 개설</button>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let currentUser = "사용자";
+        let selectedInterests = [];
+        let selectedTeachSkills = [];
+        let classrooms = [];
+        let currentClassroom = null;
+        let isLoggedIn = false;
+        let userApiKey = null;
+
+        // 태그 데이터
+        const tags = {
+            "언어": ["영어", "중국어", "일본어", "스페인어", "프랑스어"],
+            "기술": ["프로그래밍", "웹디자인", "앱개발", "AI/머신러닝", "데이터분석"],
+            "예술": ["그림", "피아노", "기타", "보컬", "댄스"],
+            "취미": ["요리", "베이킹", "가드닝", "DIY", "독서"],
+            "운동": ["요가", "필라테스", "헬스", "러닝", "등산"],
+            "학습": ["수학", "과학", "역사", "철학", "경제"],
+            "생활": ["육아", "반려동물", "인테리어", "재테크", "건강관리"]
+        };
+
+        // 초기 샘플 강의실 데이터
+        const sampleClassrooms = [
+            {
+                id: 1,
+                title: "초보자를 위한 영어 회화",
+                teacher: "김영희",
+                description: "기초 영어 회화를 편안한 분위기에서 배워보세요!",
+                tags: ["영어"],
+                students: 15,
+                createdAt: "2024-01-15",
+                threads: [
+                    {
+                        author: "김영희",
+                        content: "안녕하세요! 첫 수업 시작하겠습니다. 자기소개부터 해볼까요?",
+                        time: "2024-01-15 10:00"
+                    },
+                    {
+                        author: "박민수",
+                        content: "Hello everyone! Nice to meet you all!",
+                        time: "2024-01-15 10:05"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "파이썬 기초 프로그래밍",
+                teacher: "이개발",
+                description: "프로그래밍이 처음이신가요? 파이썬으로 차근차근 시작해보세요.",
+                tags: ["프로그래밍"],
+                students: 23,
+                createdAt: "2024-01-10",
+                threads: [
+                    {
+                        author: "이개발",
+                        content: "오늘은 변수와 데이터 타입에 대해 배워보겠습니다.",
+                        time: "2024-01-10 14:00"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "홈베이킹 클래스",
+                teacher: "최쿠키",
+                description: "집에서 만드는 맛있는 쿠키와 케이크 레시피를 공유해요!",
+                tags: ["베이킹"],
+                students: 31,
+                createdAt: "2024-01-12",
+                threads: [
+                    {
+                        author: "최쿠키",
+                        content: "오늘은 초콜릿 칩 쿠키 만들기 시간입니다! 재료 준비해주세요~",
+                        time: "2024-01-12 16:00"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "기초 피아노 레슨",
+                teacher: "정음악",
+                description: "피아노 처음 배우시는 분들을 위한 기초 레슨입니다.",
+                tags: ["피아노"],
+                students: 18,
+                createdAt: "2024-01-08",
+                threads: [
+                    {
+                        author: "정음악",
+                        content: "먼저 도레미파솔라시도 음계부터 연습해보겠습니다.",
+                        time: "2024-01-08 19:00"
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "요가 초보자 클래스",
+                teacher: "김힐링",
+                description: "몸과 마음을 편안하게 만드는 요가 동작을 배워보세요.",
+                tags: ["요가"],
+                students: 27,
+                createdAt: "2024-01-14",
+                threads: [
+                    {
+                        author: "김힐링",
+                        content: "오늘은 기본 스트레칭부터 시작하겠습니다. 편안한 자세로 앉아주세요.",
+                        time: "2024-01-14 18:00"
+                    }
+                ]
+            }
+        ];
+
+        // 초기화
+        function init() {
+            classrooms = [...sampleClassrooms];
+            renderClassrooms();
+            setupTags();
+        }
+
+        // 태그 설정
+        function setupTags() {
+            const interestContainer = document.getElementById('interestTags');
+            const teachContainer = document.getElementById('teachTags');
+            const modalContainer = document.getElementById('modalTags');
+            
+            const allTags = Object.values(tags).flat();
+            
+            [interestContainer, teachContainer, modalContainer].forEach(container => {
+                if (container) {
+                    container.innerHTML = '';
+                    allTags.forEach(tag => {
+                        const tagEl = document.createElement('div');
+                        tagEl.className = 'tag';
+                        tagEl.textContent = tag;
+                        tagEl.onclick = () => toggleTag(tagEl, tag, container);
+                        container.appendChild(tagEl);
+                    });
+                }
+            });
+        }
+
+        // 태그 토글
+        function toggleTag(element, tag, container) {
+            element.classList.toggle('selected');
+            
+            if (container.id === 'interestTags') {
+                const index = selectedInterests.indexOf(tag);
+                if (index > -1) {
+                    selectedInterests.splice(index, 1);
+                } else {
+                    selectedInterests.push(tag);
+                }
+            } else if (container.id === 'teachTags') {
+                const index = selectedTeachSkills.indexOf(tag);
+                if (index > -1) {
+                    selectedTeachSkills.splice(index, 1);
+                } else {
+                    selectedTeachSkills.push(tag);
+                }
+            }
+        }
+
+        // 강의실 렌더링
+        function renderClassrooms(classroomsToRender = classrooms) {
+            const container = document.getElementById('classroomGrid');
+            container.innerHTML = '';
+            
+            classroomsToRender.forEach(classroom => {
+                const card = document.createElement('div');
+                card.className = 'classroom-card';
+                card.onclick = () => openClassroom(classroom);
+                
+                card.innerHTML = `
+                    <div class="classroom-title">${classroom.title}</div>
+                    <div class="classroom-teacher">👨‍🏫 ${classroom.teacher}</div>
+                    <div class="classroom-description">${classroom.description}</div>
+                    <div class="classroom-meta">
+                        <div class="classroom-tags">
+                            ${classroom.tags.map(tag => `<span class="classroom-tag">${tag}</span>`).join('')}
+                        </div>
+                        <div class="stats">
+                            <span class="stat-item">👥 ${classroom.students}명</span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 강의실 검색
+        function searchClassrooms(query) {
+            if (!query.trim()) {
+                renderClassrooms();
+                document.getElementById('searchResults').classList.add('hidden');
+                return;
+            }
+            
+            const filtered = classrooms.filter(classroom => 
+                classroom.title.includes(query) || 
+                classroom.description.includes(query) ||
+                classroom.tags.some(tag => tag.includes(query))
+            );
+            
+            renderClassrooms(filtered);
+        }
+
+        // 고급 검색 (RAG 기반)
+        function showAdvancedSearch() {
+            const query = prompt('검색어를 입력하세요 (강의실, 스레드, 자료 모두 검색):');
+            if (!query) return;
+            
+            const results = searchWithRAG(query);
+            displaySearchResults(results, query);
+        }
+
+        // 검색 결과 표시
+        function displaySearchResults(results, query) {
+            const container = document.getElementById('searchResultsContent');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">검색 결과가 없습니다.</p>';
+            } else {
+                container.innerHTML = results.map(result => `
+                    <div style="background: #f8f9ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea;">
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            ${result.type === 'classroom' ? '🎓' : result.type === 'thread' ? '💬' : '📚'} 
+                            ${result.title}
+                        </div>
+                        <div style="color: #666; font-size: 14px; margin-bottom: 10px;">${result.content}</div>
+                        <a href="${result.url}" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">보기</a>
+                    </div>
+                `).join('');
+            }
+            
+            resultsDiv.classList.remove('hidden');
+        }
+
+        // 강의실 생성 모달 표시
+        function showCreateModal() {
+            document.getElementById('createModal').style.display = 'block';
+        }
+
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('createModal').style.display = 'none';
+        }
+
+        // 강의실 생성
+        function createClassroom() {
+            const name = document.getElementById('classroomName').value;
+            const description = document.getElementById('classroomDescription').value;
+            const selectedTags = Array.from(document.querySelectorAll('#modalTags .tag.selected'))
+                .map(tag => tag.textContent);
+            
+            if (!name || !description || selectedTags.length === 0) {
+                alert('모든 필드를 입력해주세요!');
+                return;
+            }
+            
+            const newClassroom = {
+                id: Date.now(),
+                title: name,
+                teacher: currentUser,
+                description: description,
+                tags: selectedTags,
+                students: 1,
+                createdAt: new Date().toISOString().split('T')[0],
+                threads: [
+                    {
+                        author: currentUser,
+                        content: `${name} 강의실에 오신 것을 환영합니다!`,
+                        time: new Date().toISOString()
+                    }
+                ]
+            };
+            
+            classrooms.unshift(newClassroom);
+            renderClassrooms();
+            closeModal();
+            
+            // 폼 초기화
+            document.getElementById('classroomName').value = '';
+            document.getElementById('classroomDescription').value = '';
+            document.querySelectorAll('#modalTags .tag.selected').forEach(tag => {
+                tag.classList.remove('selected');
+            });
+        }
+
+        // 온보딩 화면 표시
+        function showOnboarding() {
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('onboardingScreen').classList.remove('hidden');
+            // 첫 번째 단계부터 시작
+            document.getElementById('onboardingStep1').classList.remove('hidden');
+            document.getElementById('onboardingStep2').classList.add('hidden');
+        }
+
+        // 온보딩 다음 단계
+        function nextOnboardingStep() {
+            document.getElementById('onboardingStep1').classList.add('hidden');
+            document.getElementById('onboardingStep2').classList.remove('hidden');
+        }
+
+        // 온보딩 이전 단계
+        function prevOnboardingStep() {
+            document.getElementById('onboardingStep1').classList.remove('hidden');
+            document.getElementById('onboardingStep2').classList.add('hidden');
+        }
+
+        // 온보딩 완료
+        function completeOnboarding() {
+            if (selectedInterests.length === 0 && selectedTeachSkills.length === 0) {
+                alert('적어도 하나의 관심사를 선택해주세요!');
+                return;
+            }
+            
+            // 관심사 기반 맞춤 추천 (간단한 필터링)
+            const recommended = classrooms.filter(classroom => 
+                classroom.tags.some(tag => selectedInterests.includes(tag))
+            );
+            
+            document.getElementById('onboardingScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            
+            if (recommended.length > 0) {
+                renderClassrooms(recommended);
+            }
+        }
+
+        // 강의실 상세 화면 열기
+        function openClassroom(classroom) {
+            currentClassroom = classroom;
+            document.getElementById('mainContent').classList.add('hidden');
+            
+            const detailContent = document.getElementById('classroomDetailContent');
+            detailContent.innerHTML = `
+                <div class="classroom-title" style="font-size: 24px; margin-bottom: 10px;">${classroom.title}</div>
+                <div class="classroom-teacher" style="font-size: 16px; margin-bottom: 20px;">👨‍🏫 ${classroom.teacher}</div>
+                <div class="classroom-description" style="margin-bottom: 20px;">${classroom.description}</div>
+                <div class="classroom-meta" style="margin-bottom: 30px;">
+                    <div class="classroom-tags">
+                        ${classroom.tags.map(tag => `<span class="classroom-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="stats">
+                        <span class="stat-item">👥 ${classroom.students}명 수강 중</span>
+                        <span class="stat-item">🔗 <button class="btn btn-secondary" onclick="shareClassroom('${classroom.id}')" style="padding: 5px 10px; font-size: 12px;">링크 공유</button></span>
+                    </div>
+                </div>
+                
+                <!-- 라이브 강의 섹션 -->
+                <div style="margin-bottom: 30px; background: #f8f9ff; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">🎥 라이브 강의</h3>
+                    <div id="liveSection">
+                        ${classroom.isLive ? `
+                            <div style="background: #ff4444; color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                🔴 라이브 중: ${classroom.liveTitle}
+                            </div>
+                            <button class="btn btn-primary" onclick="joinLive()">라이브 참여</button>
+                        ` : `
+                            <button class="btn btn-primary" onclick="startLive()">라이브 시작</button>
+                        `}
+                    </div>
+                </div>
+                
+                <!-- 자료 섹션 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">📚 자료</h3>
+                    <div id="materials">
+                        ${(classroom.materials || []).map(material => `
+                            <div style="background: #f8f9ff; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                                <div style="font-weight: bold; margin-bottom: 5px;">${material.title}</div>
+                                <div style="color: #666; font-size: 14px;">${material.description}</div>
+                                ${material.type === 'youtube' ? `
+                                    <iframe width="100%" height="200" src="${material.url}" frameborder="0" allowfullscreen></iframe>
+                                ` : `
+                                    <a href="${material.url}" target="_blank" class="btn btn-secondary" style="margin-top: 10px;">자료 보기</a>
+                                `}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${isLoggedIn ? `
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-secondary" onclick="showMaterialModal()">자료 추가</button>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <h3 style="margin-bottom: 20px; color: #667eea;">💬 강의실 소통</h3>
+                <div id="threads">
+                    ${classroom.threads.map(thread => `
+                        <div class="thread">
+                            <div class="thread-author">${thread.author}</div>
+                            <div class="thread-content">${thread.content}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <textarea class="thread-input" placeholder="메시지를 입력하세요..." id="newThreadContent"></textarea>
+                    <button class="btn btn-primary" onclick="addThread()" style="margin-top: 10px;">전송</button>
+                </div>
+            `;
+            
+            document.getElementById('classroomDetail').classList.remove('hidden');
+        }
+
+        // 스레드 추가
+        function addThread() {
+            const content = document.getElementById('newThreadContent').value;
+            if (!content.trim()) return;
+            
+            const newThread = {
+                author: currentUser,
+                content: content,
+                time: new Date().toISOString()
+            };
+            
+            currentClassroom.threads.push(newThread);
+            
+            // 스레드 다시 렌더링
+            const threadsContainer = document.getElementById('threads');
+            const threadDiv = document.createElement('div');
+            threadDiv.className = 'thread';
+            threadDiv.innerHTML = `
+                <div class="thread-author">${newThread.author}</div>
+                <div class="thread-content">${newThread.content}</div>
+            `;
+            threadsContainer.appendChild(threadDiv);
+            
+            document.getElementById('newThreadContent').value = '';
+        }
+
+        // 메인 화면으로 돌아가기
+        function showMainContent() {
+            document.getElementById('classroomDetail').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+        }
+
+        // 로그인 관련 함수들
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function socialLogin(provider) {
+            // 실제 구현에서는 OAuth 인증을 처리합니다
+            if (provider === 'google') {
+                currentUser = "Google 사용자";
+            } else if (provider === 'naver') {
+                currentUser = "Naver 사용자";
+            }
+            
+            isLoggedIn = true;
+            document.getElementById('guestActions').classList.add('hidden');
+            document.getElementById('userActions').classList.remove('hidden');
+            closeModal();
+            
+            // API 키 자동 생성
+            generateApiKey();
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = "사용자";
+            userApiKey = null;
+            document.getElementById('guestActions').classList.remove('hidden');
+            document.getElementById('userActions').classList.add('hidden');
+        }
+
+        // API 키 관련 함수들
+        function showApiKeyModal() {
+            document.getElementById('apiKeyModal').style.display = 'block';
+            if (userApiKey) {
+                document.getElementById('apiKeyDisplay').value = userApiKey;
+            }
+        }
+
+        function generateApiKey() {
+            userApiKey = 'oc_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+            document.getElementById('apiKeyDisplay').value = userApiKey;
+        }
+
+        function copyApiKey() {
+            const apiKey = document.getElementById('apiKeyDisplay').value;
+            navigator.clipboard.writeText(apiKey);
+            alert('API 키가 복사되었습니다!');
+        }
+
+        // 강의실 공유
+        function shareClassroom(classroomId) {
+            const url = `${window.location.origin}/classroom/${classroomId}`;
+            navigator.clipboard.writeText(url);
+            alert('강의실 링크가 복사되었습니다!');
+        }
+
+        // 라이브 강의 관련
+        function startLive() {
+            if (!isLoggedIn) {
+                alert('로그인이 필요합니다!');
+                return;
+            }
+            
+            const liveTitle = prompt('라이브 강의 제목을 입력하세요:');
+            if (liveTitle) {
+                currentClassroom.isLive = true;
+                currentClassroom.liveTitle = liveTitle;
+                openClassroom(currentClassroom);
+            }
+        }
+
+        function joinLive() {
+            alert('라이브 강의에 참여합니다... (실제 구현에서는 WebRTC 연결)');
+        }
+
+        // 자료 관련 함수들
+        function showMaterialModal() {
+            document.getElementById('materialModal').style.display = 'block';
+        }
+
+        function toggleMaterialInput() {
+            const materialType = document.getElementById('materialType').value;
+            const fileGroup = document.getElementById('fileUploadGroup');
+            const linkGroup = document.getElementById('linkInputGroup');
+            
+            if (materialType === 'file') {
+                fileGroup.classList.remove('hidden');
+                linkGroup.classList.add('hidden');
+            } else {
+                fileGroup.classList.add('hidden');
+                linkGroup.classList.remove('hidden');
+            }
+        }
+
+        function addMaterial() {
+            const title = document.getElementById('materialTitle').value;
+            const description = document.getElementById('materialDescription').value;
+            const type = document.getElementById('materialType').value;
+            
+            if (!title || !description) {
+                alert('제목과 설명을 입력해주세요!');
+                return;
+            }
+            
+            let material = {
+                title: title,
+                description: description,
+                type: type,
+                author: currentUser,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (type === 'file') {
+                const file = document.getElementById('materialFile').files[0];
+                if (!file) {
+                    alert('파일을 선택해주세요!');
+                    return;
+                }
+                material.url = URL.createObjectURL(file);
+            } else {
+                const url = document.getElementById('materialUrl').value;
+                if (!url) {
+                    alert('URL을 입력해주세요!');
+                    return;
+                }
+                material.url = url;
+            }
+            
+            if (!currentClassroom.materials) {
+                currentClassroom.materials = [];
+            }
+            currentClassroom.materials.push(material);
+            
+            closeModal();
+            openClassroom(currentClassroom);
+            
+            // 폼 초기화
+            document.getElementById('materialTitle').value = '';
+            document.getElementById('materialDescription').value = '';
+            document.getElementById('materialUrl').value = '';
+            document.getElementById('materialFile').value = '';
+        }
+
+        // RAG 검색 기능 (시뮬레이션)
+        function searchWithRAG(query) {
+            // 실제 구현에서는 벡터 데이터베이스와 AI 모델을 사용합니다
+            const results = [];
+            
+            classrooms.forEach(classroom => {
+                // 강의실 제목/설명 검색
+                if (classroom.title.includes(query) || classroom.description.includes(query)) {
+                    results.push({
+                        type: 'classroom',
+                        title: classroom.title,
+                        content: classroom.description,
+                        url: `/classroom/${classroom.id}`
+                    });
+                }
+                
+                // 스레드 검색
+                classroom.threads.forEach(thread => {
+                    if (thread.content.includes(query)) {
+                        results.push({
+                            type: 'thread',
+                            title: `${classroom.title} - ${thread.author}`,
+                            content: thread.content,
+                            url: `/classroom/${classroom.id}#thread-${thread.id}`
+                        });
+                    }
+                });
+                
+                // 자료 검색
+                if (classroom.materials) {
+                    classroom.materials.forEach(material => {
+                        if (material.title.includes(query) || material.description.includes(query)) {
+                            results.push({
+                                type: 'material',
+                                title: material.title,
+                                content: material.description,
+                                url: material.url
+                            });
+                        }
+                    });
+                }
+            });
+            
+            return results;
+        }
+
+        // 초기화 실행
+        init();
+    </script>
+</body>
+</html>

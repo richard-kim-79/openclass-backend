@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # OpenClass 애플리케이션
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_TYPE=sqlite
+      - DB_PATH=/app/data/openclass.db
+    depends_on: []
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+      - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - openclass-network
+
+  # Nginx 리버스 프록시
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+      - ./client/dist:/usr/share/nginx/html
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - openclass-network
+
+networks:
+  openclass-network:
+    driver: bridge 

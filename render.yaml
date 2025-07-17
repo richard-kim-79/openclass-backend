@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: openclass-backend
+    env: node
+    buildCommand: npm install && npm run build:server
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_TYPE
+        value: sqlite
+      - key: DB_PATH
+        value: ./data/openclass.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        value: https://openclass001-7wjvfah9t-bluewhale2025.vercel.app
+      - key: HOST
+        value: 0.0.0.0 
